@@ -542,6 +542,26 @@
 
 <svg class="thread" id="thread" aria-hidden="true"><path class="thread__path" d=""/></svg>
 
+<!-- статус по времени Казани (Europe/Moscow), ?now=HH:MM — для проверки -->
+<script>
+(function () {
+  function status() {
+    var q = new URLSearchParams(location.search).get('now'), h, m;
+    if (q && /^\d{1,2}:\d{2}$/.test(q)) { h = +q.split(':')[0]; m = +q.split(':')[1]; }
+    else {
+      var p = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+      p.forEach(function (x) { if (x.type === 'hour') h = +x.value; if (x.type === 'minute') m = +x.value; });
+    }
+    var t = h * 60 + m, st, txt;
+    if (t >= 240 && t < 420) { st = 'baking'; txt = 'Печём. Горячая выпечка к 7:00'; }
+    else if (t >= 420 && t < 1200) { st = 'open'; txt = 'Открыто до 20:00'; }
+    else { st = 'closed'; txt = 'Закрыто. Откроемся в 7:00'; }
+    document.querySelectorAll('[data-status]').forEach(function (el) { el.dataset.state = st; el.querySelector('.status__txt').textContent = txt; });
+  }
+  status();
+  setInterval(status, 60000);
+})();
+</script>
 <!-- скрипты подключаются после load: первая отрисовка и LCP не ждут GSAP и пересчёта сцен -->
 <script>
 addEventListener('load', function () {

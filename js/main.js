@@ -15,24 +15,7 @@
   /* ── шрифт: если ось SHRP не пришла — фолбэк на wght ─────────────── */
   document.fonts && document.fonts.load('800 20px Geologica').then((l) => { if (!l.length) html.classList.add('no-shrp'); });
 
-  /* ── статус по времени Казани ─────────────────────────────────────── */
-  function status() {
-    const q = new URLSearchParams(location.search).get('now');
-    let h, m;
-    if (q && /^\d{1,2}:\d{2}$/.test(q)) [h, m] = q.split(':').map(Number);
-    else {
-      const p = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
-      h = +p.find((x) => x.type === 'hour').value; m = +p.find((x) => x.type === 'minute').value;
-    }
-    const t = h * 60 + m;
-    let state, txt;
-    if (t >= 240 && t < 420) { state = 'baking'; txt = 'Печём. Горячая выпечка к 7:00'; }
-    else if (t >= 420 && t < 1200) { state = 'open'; txt = 'Открыто до 20:00'; }
-    else { state = 'closed'; txt = 'Закрыто. Откроемся в 7:00'; }
-    $$('[data-status]').forEach((el) => { el.dataset.state = state; el.querySelector('.status__txt').textContent = txt; });
-  }
-  status();
-  setInterval(status, 60000);
+  /* статус «Открыто / Печём / Закрыто» считает встроенный скрипт в index.html — до загрузки GSAP */
 
   if (!hasGsap) { html.classList.add('no-gsap'); $$('[data-rise]').forEach((e) => (e.style.opacity = 1)); return; }
 
